@@ -5,12 +5,6 @@ import CreateModal from './components/CreateModal';
 import EditModal from './components/EditModal';
 import Swal from 'sweetalert2';
 
-// JSONBin.io configuration
-const BIN_ID = '67f78e048561e97a50fc9205'; // Replace with your actual bin ID
-const MASTER_KEY = '$2a$10$3Ty7XBq4KlqNoyxDLnhJH.FDKT2J490IP32JvOxRgRzdnGxq305oa'; // Replace with your master key
-const ACCESS_KEY = '$2a$10$EwuWTEgSmwpQtkqn5ReTaeDuczf1ZIkalnRWrU7VL1TTHIx7XV6xa'; // Replace with your access key
-const API_URL = `https://api.jsonbin.io/v3/b/${67f78e048561e97a50fc9205}`;
-
 function App() {
   const [items, setItems] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -31,16 +25,12 @@ function App() {
     };
   }, [showCreateModal, showEditModal]);
 
-  // Fetch all items from JSONBin.io
+  // Fetch all items from the db.json file
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch(API_URL, {
-          headers: {
-            'X-Access-Key': ACCESS_KEY
-          }
-        });
-        const { record: data } = await response.json();
+        const response = await fetch('http://localhost:3001/items');
+        const data = await response.json();
         setItems(data);
         setIsLoading(false);
       } catch (error) {
@@ -57,17 +47,36 @@ function App() {
     fetchItems();
   }, []);
 
-  // Helper function to update the entire bin
-  const updateBin = async (newData) => {
-    const response = await fetch(API_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': MASTER_KEY
-      },
-      body: JSON.stringify(newData)
-    });
-    return await response.json();
+  // Helper function to handle image upload
+  const handleImageUpload = async (imageFile) => {
+    if (!imageFile) return null;
+    
+    // Create a new FormData instance
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    
+    try {
+      // Simulate saving image to public folder in a real app
+      // For a real implementation, you would have a server endpoint for file uploads
+      // Here we'll just return a filename based on current time to simulate
+      const filename = `image-${Date.now()}-${imageFile.name}`;
+      
+      // In a real app with a proper backend:
+      // const response = await fetch('http://localhost:3001/upload', {
+      //   method: 'POST',
+      //   body: formData
+      // });
+      // const data = await response.json();
+      // return data.filename;
+      
+      // Copy the file to public/images folder (this is simulated in our case)
+      console.log(`Image ${filename} would be saved to public/images/`);
+      
+      return filename;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw new Error('Failed to upload image');
+    }
   };
 
   // Create a new item
@@ -81,15 +90,19 @@ function App() {
       
       const itemWithImage = {
         ...newItem,
-        id: Date.now().toString(), // Generate unique ID
-        image: imageFilename || 'default-image.jpg'
+        image: imageFilename || 'default-image.jpg' // Default image if none provided
       };
       
-      // Update the entire bin with new data
-      const newItems = [...items, itemWithImage];
-      await updateBin(newItems);
+      const response = await fetch('http://localhost:3001/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(itemWithImage),
+      });
       
-      setItems(newItems);
+      const createdItem = await response.json();
+      setItems([...items, createdItem]);
       setShowCreateModal(false);
       
       Swal.fire({
@@ -119,13 +132,16 @@ function App() {
         updatedItemData.image = imageFilename;
       }
       
-      // Update the entire bin with modified data
-      const newItems = items.map(item => 
-        item.id === updatedItemData.id ? updatedItemData : item
-      );
-      await updateBin(newItems);
+      const response = await fetch(`http://localhost:3001/items/${updatedItem.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedItemData),
+      });
       
-      setItems(newItems);
+      const updated = await response.json();
+      setItems(items.map(item => item.id === updated.id ? updated : item));
       setShowEditModal(false);
       
       Swal.fire({
@@ -148,11 +164,11 @@ function App() {
   // Delete an item
   const handleDelete = async (id) => {
     try {
-      // Update the entire bin with filtered data
-      const newItems = items.filter(item => item.id !== id);
-      await updateBin(newItems);
+      await fetch(`http://localhost:3001/items/${id}`, {
+        method: 'DELETE',
+      });
       
-      setItems(newItems);
+      setItems(items.filter(item => item.id !== id));
       
       Swal.fire({
         icon: 'success',
