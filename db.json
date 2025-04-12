@@ -1,0 +1,35 @@
+{
+  "items": [
+    {
+      "id": "1",
+      "name": "Blinding Lights",
+      "description": "The Weeknd"
+    },
+    {
+      "id": "2",
+      "name": "Levitating",
+      "description": "Dua Lipa"
+    },
+    {
+      "id": "3",
+      "name": "Shape of You",
+      "description": "Ed Sheeran"
+    },
+    {
+      "id": "3400",
+      "name": "Stay",
+      "description": "The Kid LAROI & Justin Bieber"
+    },
+    {
+      "id": "78d0",
+      "name": "As It Was",
+      "description": "Harry Styles"
+    },
+    {
+      "id": "e459",
+      "name": "Easy On Me",
+      "description": "Adele",
+      "image": "default-image.jpg"
+    }
+  ]
+}
