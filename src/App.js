@@ -29,7 +29,7 @@ function App() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch('http://localhost:3001/items');
+        const response = await fetch('https://db-user.onrender.com/items');
         const data = await response.json();
         setItems(data);
         setIsLoading(false);
@@ -93,7 +93,7 @@ function App() {
         image: imageFilename || 'default-image.jpg' // Default image if none provided
       };
       
-      const response = await fetch('http://localhost:3001/items', {
+      const response = await fetch('https://db-user.onrender.com/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ function App() {
         updatedItemData.image = imageFilename;
       }
       
-      const response = await fetch(`http://localhost:3001/items/${updatedItem.id}`, {
+      const response = await fetch(`https://db-user.onrender.com/items/${updatedItem.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ function App() {
   // Delete an item
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:3001/items/${id}`, {
+      await fetch(`https://db-user.onrender.com/items/${id}`, {
         method: 'DELETE',
       });
       
