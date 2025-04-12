@@ -22,7 +22,7 @@ function ItemList({ items, onEditClick, onDeleteClick }) {
             <div className="card h-100 shadow-sm hover-shadow">
               <div className="card-img-top text-center p-3 bg-light">
                 <img
-                  src="/images/default-avatar.png"
+                  src="/images/deafault-avatar.png"
                   alt={user.name}
                   className="img-fluid rounded-circle"
                   style={{ height: "120px", width: "120px", objectFit: "cover" }}
