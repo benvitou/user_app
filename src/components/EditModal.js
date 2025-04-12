@@ -5,26 +5,18 @@ function EditModal({ item, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    description: '',
-    image: '',
-    location:'',
+    address: '',
+    phone: '',
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (item) {
       setFormData({
         id: item.id,
         name: item.name,
-        description: item.description,
-        image: item.image || ''
+        address: item.address,
+        phone: item.phone,
       });
-      
-      // Set image preview for existing image
-      if (item.image) {
-        setImagePreview(`/images/${item.image}`);
-      }
     }
   }, [item]);
 
@@ -33,23 +25,9 @@ function EditModal({ item, onClose, onSubmit }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      
-      // Create a preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData, imageFile);
+    onSubmit(formData);
   };
 
   return ReactDOM.createPortal(
@@ -60,15 +38,15 @@ function EditModal({ item, onClose, onSubmit }) {
             <div className="modal-header bg-primary text-white">
               <h5 className="modal-title">
                 <i className="bi bi-pencil-square me-2"></i>
-                Edit Item
+                Edit User
               </h5>
               <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
             </div>
-            
+
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <div className="mb-3">
-                  <label className="form-label" htmlFor="edit-name">Title</label>
+                  <label className="form-label" htmlFor="edit-name">Name</label>
                   <input
                     type="text"
                     id="edit-name"
@@ -79,67 +57,34 @@ function EditModal({ item, onClose, onSubmit }) {
                     required
                   />
                 </div>
-                
+
                 <div className="mb-3">
-                  <label className="form-label" htmlFor="edit-description">Description</label>
+                  <label className="form-label" htmlFor="edit-address">Address</label>
                   <textarea
-                    id="edit-description"
-                    name="description"
-                    value={formData.description}
+                    id="edit-address"
+                    name="address"
+                    value={formData.address}
                     onChange={handleChange}
                     className="form-control"
-                    rows="3"
+                    rows="2"
                     required
                   ></textarea>
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label" htmlFor="lcoation">Location</label>
+                  <label className="form-label" htmlFor="edit-phone">Phone</label>
                   <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
+                    type="tel"
+                    id="edit-phone"
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleChange}
                     className="form-control"
-                    placeholder="Enter music location"
                     required
                   />
                 </div>
-                
-                <div className="mb-3">
-                  <label className="form-label" htmlFor="edit-image">Image</label>
-                  <input
-                    type="file"
-                    id="edit-image"
-                    name="image"
-                    onChange={handleImageChange}
-                    className="form-control"
-                    accept="image/*"
-                  />
-                  <div className="form-text">
-                    {formData.image 
-                      ? "Current image: " + formData.image + ". Upload a new one to replace it." 
-                      : "No image currently. Upload one (optional)."
-                    }
-                  </div>
-                </div>
-                
-                {imagePreview && (
-                  <div className="mb-3 text-center">
-                    <label className="form-label">Image Preview</label>
-                    <div className="border rounded p-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
-                        className="img-fluid"
-                        style={{maxHeight: "200px"}}
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
-              
+
               <div className="modal-footer">
                 <button
                   type="button"
